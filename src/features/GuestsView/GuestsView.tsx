@@ -14,6 +14,8 @@ import searchIcon from '../../icons/search.svg';
 import deleteIcon from '../../icons/delete.svg';
 import type { Guest } from '../../types/Guest';
 import './style.scss';
+import { DeleteGuestModal } from '../../modal/DeleteGuestModal';
+import { CreateNewGuestModal } from '../../modal/CreateNewGuestModal';
 
 const initialGuests: Guest[] = [
   {
@@ -28,8 +30,8 @@ const initialGuests: Guest[] = [
   },
   {
     id: 2,
-    name: 'Дмитрий',
-    phone: '+7 (999) 999-99-99',
+    name: 'Диана',
+    phone: '+7 (987) 123-45-67',
     points: 0,
     smallTaken: 0,
     largeTaken: 0,
@@ -42,9 +44,10 @@ export function GuestsView() {
   const [guests, setGuests] = useState<Guest[]>(initialGuests);
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
+  const [isCreateModalOpened, setCreateModalOpened] = useState(false);
   const [points, setPoints] = useState<number | ''>(0);
 
-  function handleAddGuest() {
+  function handleAddGuest(name: string, phone: String) {
     if (!name.trim() || !phone.trim()) return;
 
     const newGuest: Guest = {
@@ -64,8 +67,23 @@ export function GuestsView() {
     setPoints(0);
   }
 
+  function addPoint(id?: number) {
+    if (!id) return;
+
+    setGuests((prev) => prev.map((guest) => (guest.id === id ? { ...guest, points: guest.points + 1 } : guest)));
+  }
+
+  function removePoints(id?: number, points?: number) {
+    if (!id) return;
+    if (!points) return;
+
+    setGuests((prev) => prev.map((guest) => (guest.id === id && guest.points >= points ? { ...guest, points: guest.points - points } : guest)));
+  }
+
   return (
     <Stack gap="md">
+      <DeleteGuestModal guest={initialGuests[0]} opened={false} onConfirm={() => {}} onClose={() => {}} />
+      <CreateNewGuestModal opened={isCreateModalOpened} onConfirm={handleAddGuest} onClose={() => setCreateModalOpened(false)} />
       <Group justify="space-between" align="center">
         <Group gap={5}>
           <TextInput
@@ -76,7 +94,7 @@ export function GuestsView() {
             className="guest-input"
           />
           <Button
-            onClick={handleAddGuest}
+            // onClick={handleAddGuest}
             p={0}
             style={{
               backgroundColor: '#919191',
@@ -88,7 +106,17 @@ export function GuestsView() {
         </Group>
 
         <Button
-          onClick={handleAddGuest}
+          onClick={() => setCreateModalOpened(true)}
+          style={{
+            backgroundColor: '#0000006e',
+            boxShadow: '0 0 6px 1px rgba(0, 0, 0)',
+          }}
+        >
+          Добавить гостя
+        </Button>
+
+        <Button
+          // onClick={handleAddGuest}
           style={{
             backgroundColor: '#0000006e',
             boxShadow: '0 0 6px 1px rgba(0, 0, 0)',
@@ -145,16 +173,16 @@ export function GuestsView() {
                   <Table.Td >{guest.points}</Table.Td>
                   <Table.Td style={{borderRadius: index === guests.length - 1 ? '0 0 10px 0' : ''}}>
                     <Group gap="xs" justify="space-around">
-                      <Button size="xs" bg={'#52ce5c'}>
+                      <Button size="xs" bg={'#52ce5c'} onClick={() => addPoint(guest.id)}>
                         +1
                       </Button>
                       <Group>
-                        <Button size="xs" variant="light">
+                        <Button size="xs" variant="light" onClick={() => removePoints(guest.id, 8)}>
                           <Text size='12px' fw={600}>
                             Маленький
                           </Text>
                         </Button>
-                        <Button size="xs" variant="light">
+                        <Button size="xs" variant="light" onClick={() => removePoints(guest.id, 16)}>
                           <Text size='18px' fw={600}>
                             Большой
                           </Text>

@@ -1,9 +1,10 @@
 // src/App.tsx
 import { Title, Stack, Paper } from '@mantine/core';
 import { GuestsView } from '../features/GuestsView/GuestsView';
+import { DeleteGuestModal } from '../modal/DeleteGuestModal';
 
 function App() {
-  return (
+  return (<>
     <Paper
       bg="#3a3a3a"
       style={{
@@ -27,6 +28,9 @@ function App() {
         </Paper>
       </Stack>
     </Paper>
+
+    
+  </>
   );
 }
 

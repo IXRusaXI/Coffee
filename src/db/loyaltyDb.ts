@@ -1,13 +1,5 @@
 import Dexie, { type EntityTable } from 'dexie';
-
-export interface Guest {
-  id?: number;           // автоинкремент
-  name: string;
-  phone: string;
-  points: number;
-  createdAt: string;
-  updatedAt: string;
-}
+import type { Guest } from '../types/Guest';
 
 export interface BackupMeta {
   id?: number;
